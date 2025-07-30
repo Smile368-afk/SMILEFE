@@ -159,9 +159,7 @@
 
     <div id="cartItems"></div>
 
-   <form id="checkoutForm" enctype="multipart/form-data">
-
-
+    <form id="checkoutForm" enctype="multipart/form-data">
       <input type="text" name="name" placeholder="Full Name" required />
       <input type="text" name="contact" placeholder="Contact Number" required />
       <input type="text" name="address" placeholder="Shipping Address" required />
@@ -173,9 +171,8 @@
       </select>
 
       <div id="codMessage" style="display: none; color: orange; margin-top: 10px;">
-  <strong>Delivery Charges Required First, Team Will Contact You Shortly , Thankyou</strong>
-</div>
-
+        <strong>Delivery Charges Required First, Team Will Contact You Shortly , Thankyou</strong>
+      </div>
 
       <div id="easyInstructions" style="display: none;">
         <p>Send payment to: <strong>0319-5274167</strong><br>Name: <strong>M Hamza</strong></p>
@@ -188,95 +185,94 @@
   </div>
 
   <script>
-  const menuToggle = document.getElementById("menu-toggle");
-  const navLinks = document.getElementById("navLinks");
-  const cartItemsDiv = document.getElementById("cartItems");
-  const paymentMethod = document.getElementById("paymentMethod");
-  const easyInstructions = document.getElementById("easyInstructions");
-  const codMessage = document.getElementById("codMessage");
+    const menuToggle = document.getElementById("menu-toggle");
+    const navLinks = document.getElementById("navLinks");
+    const cartItemsDiv = document.getElementById("cartItems");
+    const paymentMethod = document.getElementById("paymentMethod");
+    const easyInstructions = document.getElementById("easyInstructions");
+    const codMessage = document.getElementById("codMessage");
 
-  menuToggle.addEventListener("click", () => {
-    navLinks.style.display = navLinks.style.display === "block" ? "none" : "block";
-  });
-
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-  function getImageURL(productName) {
-    if (productName === "Down Shoulder T-Shirt") {
-      return "https://via.placeholder.com/120x150.png?text=Down+Shoulder";
-    }
-    return "https://via.placeholder.com/120x150.png?text=Product";
-  }
-
-  function displayCart() {
-    if (cart.length === 0) {
-      cartItemsDiv.innerHTML = "<p>Your cart is empty.</p>";
-      return;
-    }
-
-    cartItemsDiv.innerHTML = "";
-    cart.forEach((item, index) => {
-      cartItemsDiv.innerHTML += `
-        <div class="cart-item">
-          <img src="${item.image}" alt="Product Image" />
-          <div class="item-details">
-            <strong>${item.product}</strong><br />
-            Size: ${item.size} | Qty: ${item.quantity} | Price: Rs.${item.price}
-          </div>
-          <div>
-            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
-          </div>
-        </div>
-      `;
+    menuToggle.addEventListener("click", () => {
+      navLinks.style.display = navLinks.style.display === "block" ? "none" : "block";
     });
-  }
 
-  function removeFromCart(index) {
-    cart.splice(index, 1);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    displayCart();
-  }
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-  paymentMethod.addEventListener('change', () => {
-    const method = paymentMethod.value;
-    easyInstructions.style.display = method === "EasyPaisa" ? 'block' : 'none';
-    codMessage.style.display = method === "CashOnDelivery" ? 'block' : 'none';
-  });
-
-  document.getElementById("checkoutForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    if (cart.length === 0) {
-      alert("Your cart is empty.");
-      return;
-    }
-
-    const form = e.target;
-    const formData = new FormData(form);
-    formData.append("cart", JSON.stringify(cart));
-
-   fetch("https://smileslyfb.onrender.com/checkout", {
-
-      method: "POST",
-      body: formData
-    })
-    .then(response => {
-      if (response.ok) {
-        alert("Order confirmed and saved to database!");
-        localStorage.removeItem('cart');
-        window.location.href = "thankyou.html";
-      } else {
-        alert("Failed to submit order.");
+    function getImageURL(productName) {
+      if (productName === "Down Shoulder T-Shirt") {
+        return "https://via.placeholder.com/120x150.png?text=Down+Shoulder";
       }
-    })
-    .catch(error => {
-      console.error(error);
-      alert("Error submitting order.");
-    });
-  });
+      return "https://via.placeholder.com/120x150.png?text=Product";
+    }
 
-  displayCart();
-</script>
+    function displayCart() {
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = "<p>Your cart is empty.</p>";
+        return;
+      }
+
+      cartItemsDiv.innerHTML = "";
+      cart.forEach((item, index) => {
+        cartItemsDiv.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.image || getImageURL(item.product)}" alt="Product Image" />
+            <div class="item-details">
+              <strong>${item.product}</strong><br />
+              Size: ${item.size} | Qty: ${item.quantity} | Price: Rs.${item.price}
+            </div>
+            <div>
+              <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      displayCart();
+    }
+
+    paymentMethod.addEventListener('change', () => {
+      const method = paymentMethod.value;
+      easyInstructions.style.display = method === "EasyPaisa" ? 'block' : 'none';
+      codMessage.style.display = method === "CashOnDelivery" ? 'block' : 'none';
+    });
+
+    document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+
+      const form = e.target;
+      const formData = new FormData(form);
+      formData.append("cart", JSON.stringify(cart));
+
+      fetch("https://smilebe.onrender.com/checkout", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("Order confirmed and saved to database!");
+          localStorage.removeItem('cart');
+          window.location.href = "thankyou.html";
+        } else {
+          alert("Failed to submit order.");
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        alert("Error submitting order.");
+      });
+    });
+
+    displayCart();
+  </script>
 
 </body>
 </html>
