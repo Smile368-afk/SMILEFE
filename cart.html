@@ -29,28 +29,25 @@
   </form>
 
   <script>
-    // Toggle EasyPaisa screenshot field
+    // Show/hide screenshot input based on payment method
     document.getElementById('paymentMethod').addEventListener('change', function () {
-      const show = this.value === 'easypaisa';
-      document.getElementById('screenshotUpload').style.display = show ? 'block' : 'none';
+      document.getElementById('screenshotUpload').style.display =
+        this.value === 'easypaisa' ? 'block' : 'none';
     });
 
-    // Fake cart setup (for testing only)
-    const sampleCart = [
+    // Example cart for testing
+    const cart = [
       { product: 'T-Shirt 1', size: 'M', quantity: 2, price: 1200 },
       { product: 'T-Shirt 2', size: 'L', quantity: 1, price: 1500 }
     ];
-    if (!localStorage.getItem("cart")) {
-      localStorage.setItem("cart", JSON.stringify(sampleCart));
-    }
+    localStorage.setItem("cart", JSON.stringify(cart));
 
     document.getElementById('checkout-form').addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const formData = new FormData(this);
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      if (!cart.length) return alert("🛒 Your cart is empty!");
+      if (!cart.length) return alert("Cart is empty!");
 
       formData.append("cart", JSON.stringify(cart));
 
@@ -68,11 +65,11 @@
           this.reset();
           document.getElementById('screenshotUpload').style.display = 'none';
         } else {
-          alert("❌ Order failed: " + result);
+          alert("❌ Submission failed: " + result);
         }
       } catch (error) {
-        console.error("❌ Network error:", error);
-        alert("❌ Could not submit order. See console.");
+        console.error("❌ Submit error:", error);
+        alert("❌ Error submitting order. See console.");
       }
     });
   </script>
